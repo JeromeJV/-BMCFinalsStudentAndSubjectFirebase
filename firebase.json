@@ -1,0 +1,36 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "valdepena-harvey-jerome-17",
+          "appId": "1:62985333190:android:6a8bcd212ed541c4312ac7",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "valdepena-harvey-jerome-17",
+          "configurations": {
+            "android": "1:62985333190:android:6a8bcd212ed541c4312ac7",
+            "web": "1:62985333190:web:18ffed4b15368e0b312ac7"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

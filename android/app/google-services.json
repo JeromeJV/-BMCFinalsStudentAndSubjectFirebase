@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "62985333190",
+    "project_id": "valdepena-harvey-jerome-17",
+    "storage_bucket": "valdepena-harvey-jerome-17.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62985333190:android:6a8bcd212ed541c4312ac7",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQDO45ufnPA_PYExbFZ26OzrRVriPSrVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
