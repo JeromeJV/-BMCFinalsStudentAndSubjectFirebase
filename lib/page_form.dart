@@ -1,346 +1,315 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-/// Page na nagtitipon ng biodata at nagsa-save nito sa Firestore.
 class FormPage extends StatefulWidget {
-  /// Gumagawa ng biodata page.
   const FormPage({super.key});
 
-  /// Gumagawa ng state para sa mga input at form actions.
   @override
   State<FormPage> createState() => _FormPageState();
 }
 
 class _FormPageState extends State<FormPage> {
-  final _formKey = GlobalKey<FormState>();
+  final _registrationFormKey = GlobalKey<FormState>();
+  final _subjectsFormKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _nicknameController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _streetAddressController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _zipCodeController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _schoolController = TextEditingController();
-  final _courseController = TextEditingController();
   final _sectionController = TextEditingController();
-
+  final _courseController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String? _selectedGender;
-  DateTime? _selectedBirthdate;
+  final List<_SubjectEntry> _subjects = [_SubjectEntry(), _SubjectEntry()];
+
+  int _step = 0;
   bool _isSaving = false;
 
-  /// Sinusuri ang biodata at sine-save ito sa `students` collection sa Firestore.
-  Future<void> saveData() async {
-    if (!_formKey.currentState!.validate()) return;
+  void _next() {
+    final isValid = switch (_step) {
+      0 => _registrationFormKey.currentState!.validate(),
+      1 => _subjectsFormKey.currentState!.validate(),
+      _ => true,
+    };
+    if (isValid) setState(() => _step++);
+  }
 
+  void _back() {
+    if (_step > 0) setState(() => _step--);
+  }
+
+  Future<void> _selectTime(
+    _SubjectEntry subject, {
+    required bool isStart,
+  }) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime:
+          (isStart ? subject.startTime : subject.endTime) ?? TimeOfDay.now(),
+    );
+    if (picked == null || !mounted) return;
+
+    setState(() {
+      if (isStart) {
+        subject.startTime = picked;
+        subject.startTimeController.text = picked.format(context);
+      } else {
+        subject.endTime = picked;
+        subject.endTimeController.text = picked.format(context);
+      }
+    });
+  }
+
+  Future<void> _save() async {
     setState(() => _isSaving = true);
     try {
-      await _firestore.collection('students').add({
+      await _firestore.collection('ACTIVITY3').add({
         'name': _nameController.text.trim(),
-        'nickname': _nicknameController.text.trim(),
-        'age': int.parse(_ageController.text.trim()),
-        'gender': _selectedGender,
-        'birthdate': Timestamp.fromDate(_selectedBirthdate!),
-        'streetAddress': _streetAddressController.text.trim(),
-        'city': _cityController.text.trim(),
-        'zipCode': _zipCodeController.text.trim(),
-        'email': _emailController.text.trim(),
-        'phoneNumber': _phoneController.text.trim(),
-        'school': _schoolController.text.trim(),
-        'course': _courseController.text.trim(),
         'section': _sectionController.text.trim(),
+        'course': _courseController.text.trim(),
+        'subjects': _subjects
+            .map(
+              (subject) => {
+                'name': subject.nameController.text.trim(),
+                'startTime': subject.startTimeController.text.trim(),
+                'endTime': subject.endTimeController.text.trim(),
+              },
+            )
+            .toList(),
         'createdAt': FieldValue.serverTimestamp(),
       });
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Biodata saved successfully')),
+        const SnackBar(content: Text('Registration saved successfully')),
       );
-      _formKey.currentState!.reset();
-      for (final controller in [
-        _nameController,
-        _nicknameController,
-        _ageController,
-        _streetAddressController,
-        _cityController,
-        _zipCodeController,
-        _emailController,
-        _phoneController,
-        _schoolController,
-        _courseController,
-        _sectionController,
-      ]) {
-        controller.clear();
+      _nameController.clear();
+      _sectionController.clear();
+      _courseController.clear();
+      for (final subject in _subjects) {
+        subject.dispose();
       }
       setState(() {
-        _selectedGender = null;
-        _selectedBirthdate = null;
+        _subjects
+          ..clear()
+          ..addAll([_SubjectEntry(), _SubjectEntry()]);
+        _step = 0;
       });
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hindi na-save ang biodata: $error')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Not Registered: $error')));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
   }
 
-  /// Gumagawa ng heading para malinaw ang mga pangkat ng biodata fields.
-  Widget _sectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 12),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Gumagawa ng text field na may icon at validation para sa kinakailangang sagot.
   Widget _textField({
     required TextEditingController controller,
     required String label,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    List<TextInputFormatter>? inputFormatters,
-    String? Function(String?)? extraValidator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
+        textCapitalization: TextCapitalization.words,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon),
           border: const OutlineInputBorder(),
+        ),
+        validator: (value) =>
+            value == null || value.trim().isEmpty ? 'Pls input $label' : null,
+      ),
+    );
+  }
+
+  Widget _registrationStep() {
+    return Form(
+      key: _registrationFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _textField(controller: _nameController, label: 'Name'),
+          _textField(controller: _sectionController, label: 'Section'),
+          _textField(controller: _courseController, label: 'Course'),
+        ],
+      ),
+    );
+  }
+
+  Widget _subjectsStep() {
+    return Form(
+      key: _subjectsFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var index = 0; index < _subjects.length; index++)
+            _subjectCard(index),
+        ],
+      ),
+    );
+  }
+
+  Widget _subjectCard(int index) {
+    final subject = _subjects[index];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Subject ${index + 1}'),
+          _textField(controller: subject.nameController, label: 'Subject'),
+          _timeField(subject: subject, isStart: true),
+          _timeField(subject: subject, isStart: false),
+          const Divider(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _timeField({required _SubjectEntry subject, required bool isStart}) {
+    final controller = isStart
+        ? subject.startTimeController
+        : subject.endTimeController;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
+        readOnly: true,
+        onTap: () => _selectTime(subject, isStart: isStart),
+        decoration: InputDecoration(
+          labelText: isStart ? 'Start Time' : 'End Time',
+          hintText: isStart ? 'Select start time' : 'Select end time',
+          border: OutlineInputBorder(),
         ),
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
-            return 'Pakilagay ang $label';
+            return 'Please select a ${isStart ? 'start' : 'end'} time';
           }
-          return extraValidator?.call(value);
+          final start = subject.startTime;
+          final end = subject.endTime;
+          if (!isStart &&
+              start != null &&
+              end != null &&
+              end.hour * 60 + end.minute <= start.hour * 60 + start.minute) {
+            return 'End time must be after start time';
+          }
+          return null;
         },
       ),
     );
   }
 
-  /// Nagpapakita ng date picker at nagva-validate ng napiling birthday.
-  Widget _birthdateField() {
-    return FormField<DateTime>(
-      validator: (value) => value == null ? 'Pumili ng birthdate' : null,
-      builder: (field) {
-        final date = field.value;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(4),
-            onTap: () async {
-              final now = DateTime.now();
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: _selectedBirthdate ?? DateTime(now.year - 18),
-                firstDate: DateTime(1900),
-                lastDate: now,
-              );
-              if (picked != null) {
-                setState(() => _selectedBirthdate = picked);
-                field.didChange(picked);
-              }
-            },
-            child: InputDecorator(
-              decoration: InputDecoration(
-                labelText: 'Birthdate',
-                prefixIcon: const Icon(Icons.calendar_month),
-                border: const OutlineInputBorder(),
-                errorText: field.errorText,
-              ),
-              child: Text(
-                date == null
-                    ? 'Tap to select'
-                    : '${date.month}/${date.day}/${date.year}',
-              ),
+  Widget _verificationStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _detailRow('Name', _nameController.text.trim()),
+        _detailRow('Section', _sectionController.text.trim()),
+        _detailRow('Course', _courseController.text.trim()),
+        const SizedBox(height: 8),
+        const Text('Subjects'),
+        const SizedBox(height: 4),
+        for (var index = 0; index < _subjects.length; index++)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Text(
+              '${index + 1}. ${_subjects[index].nameController.text.trim()}'
+              ' — ${_subjects[index].startTimeController.text.trim()}'
+              ' to ${_subjects[index].endTimeController.text.trim()}',
             ),
           ),
-        );
-      },
+        const SizedBox(height: 8),
+        Text('Please verify your details before saving.'),
+      ],
     );
   }
 
-  /// Isinasara ang lahat ng text controllers kapag inalis na ang page.
+  Widget _detailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Text('$label: $value'),
+    );
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
-    _nicknameController.dispose();
-    _ageController.dispose();
-    _streetAddressController.dispose();
-    _cityController.dispose();
-    _zipCodeController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _schoolController.dispose();
-    _courseController.dispose();
     _sectionController.dispose();
+    _courseController.dispose();
+    for (final subject in _subjects) {
+      subject.dispose();
+    }
     super.dispose();
   }
 
-  /// Binubuo ang scrollable biodata form na nakaayos ayon sa screenshot.
   @override
   Widget build(BuildContext context) {
+    final titles = ['User Registration', 'Subject Enrollment', 'Verification'];
+    final stepContent = switch (_step) {
+      0 => _registrationStep(),
+      1 => _subjectsStep(),
+      _ => _verificationStep(),
+    };
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Biodata Form')),
+      appBar: AppBar(
+        leading: _step == 0
+            ? null
+            : IconButton(
+                tooltip: 'Back',
+                onPressed: _back,
+                icon: const Icon(Icons.arrow_back),
+              ),
+        title: Text(titles[_step]),
+      ),
       body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Container(
-                  width: 88,
-                  height: 88,
-                  margin: const EdgeInsets.only(top: 16, bottom: 4),
-                  color: Theme.of(context).colorScheme.primary,
-                  child: const Icon(
-                    Icons.person,
-                    size: 76,
-                    color: Colors.white,
-                  ),
-                ),
-                _sectionTitle('Basic Information'),
-                _textField(
-                  controller: _nameController,
-                  label: 'Full Name',
-                  icon: Icons.person,
-                ),
-                _textField(
-                  controller: _nicknameController,
-                  label: 'Nickname',
-                  icon: Icons.badge,
-                ),
-                _textField(
-                  controller: _ageController,
-                  label: 'Age',
-                  icon: Icons.cake,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  extraValidator: (value) {
-                    final age = int.tryParse(value!.trim());
-                    if (age == null || age < 1 || age > 150) {
-                      return 'Maglagay ng valid na edad';
-                    }
-                    return null;
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: DropdownButtonFormField<String>(
-                    key: ValueKey(_selectedGender),
-                    initialValue: _selectedGender,
-                    decoration: const InputDecoration(
-                      labelText: 'Gender',
-                      prefixIcon: Icon(Icons.wc),
-                      border: OutlineInputBorder(),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'Female', child: Text('Female')),
-                      DropdownMenuItem(value: 'Male', child: Text('Male')),
-                      DropdownMenuItem(
-                        value: 'Prefer not to say',
-                        child: Text('Prefer not to say'),
-                      ),
-                    ],
-                    onChanged: (value) =>
-                        setState(() => _selectedGender = value),
-                    validator: (value) =>
-                        value == null ? 'Pumili ng gender' : null,
-                  ),
-                ),
-                _birthdateField(),
-                _sectionTitle('Address'),
-                _textField(
-                  controller: _streetAddressController,
-                  label: 'Street Address',
-                  icon: Icons.home,
-                ),
-                _textField(
-                  controller: _cityController,
-                  label: 'City',
-                  icon: Icons.location_city,
-                ),
-                _textField(
-                  controller: _zipCodeController,
-                  label: 'Zip Code',
-                  icon: Icons.numbers,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                ),
-                _sectionTitle('Contact'),
-                _textField(
-                  controller: _emailController,
-                  label: 'Email Address',
-                  icon: Icons.email,
-                  keyboardType: TextInputType.emailAddress,
-                  extraValidator: (value) {
-                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                        .hasMatch(value!.trim())) {
-                      return 'Maglagay ng valid na email address';
-                    }
-                    return null;
-                  },
-                ),
-                _textField(
-                  controller: _phoneController,
-                  label: 'Phone Number',
-                  icon: Icons.phone,
-                  keyboardType: TextInputType.phone,
-                ),
-                _sectionTitle('School Details'),
-                _textField(
-                  controller: _schoolController,
-                  label: 'School Name',
-                  icon: Icons.school,
-                ),
-                _textField(
-                  controller: _courseController,
-                  label: 'Course',
-                  icon: Icons.menu_book,
-                ),
-                _textField(
-                  controller: _sectionController,
-                  label: 'Section',
-                  icon: Icons.groups,
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _isSaving ? null : saveData,
-                    icon: _isSaving
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.save),
-                    label: Text(_isSaving ? 'Sine-save...' : 'Save Biodata'),
-                  ),
-                ),
-              ],
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Step ${_step + 1} of ${titles.length}'),
+              ),
             ),
-          ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [const SizedBox(height: 16), stepContent],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: _isSaving ? null : (_step == 2 ? _save : _next),
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(_step == 2 ? 'Save' : 'Next'),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+}
+
+class _SubjectEntry {
+  final nameController = TextEditingController();
+  final startTimeController = TextEditingController();
+  final endTimeController = TextEditingController();
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
+
+  void dispose() {
+    nameController.dispose();
+    startTimeController.dispose();
+    endTimeController.dispose();
   }
 }

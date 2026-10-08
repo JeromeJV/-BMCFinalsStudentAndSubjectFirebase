@@ -1,0 +1,155 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 4492 >>
+stream
+q
+1.000 1.000 1.000 rg
+0 0 595 842 re f
+Q
+q
+0.098 0.231 0.447 rg
+42 714 511 92 re f
+Q
+BT /F2 9 Tf 0.737 0.839 1.000 rg 1 0 0 1 62 781 Tm (FLUTTER WEB  |  FIREBASE HOSTING) Tj ET
+BT /F2 23 Tf 1.000 1.000 1.000 rg 1 0 0 1 62 747 Tm (Gabay sa pag-deploy) Tj ET
+BT /F1 10 Tf 0.929 0.957 1.000 rg 1 0 0 1 62 727 Tm (Mga hakbang para i-publish ang Biodata Form app.) Tj ET
+BT /F1 9.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 44 687.5 Tm (Na-deploy na ang app sa Firebase Hosting. Sundin ang mga hakbang sa ibaba para ulitin ang) Tj ET
+BT /F1 9.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 44 674.5 Tm (deployment kapag may binago kang code.) Tj ET
+BT /F2 14 Tf 0.098 0.231 0.447 rg 1 0 0 1 44 647 Tm (Step-by-step) Tj ET
+q
+1.000 1.000 1.000 rg
+0.863 0.898 0.945 RG 0.8 w
+44 555 507 80 re B
+Q
+q
+0.157 0.392 0.690 rg
+57 596 25 25 re f
+Q
+BT /F2 12 Tf 1.000 1.000 1.000 rg 1 0 0 1 66 605 Tm (1) Tj ET
+BT /F2 10.5 Tf 0.090 0.125 0.200 rg 1 0 0 1 94 613.5 Tm (Buksan ang PowerShell sa project folder) Tj ET
+BT /F1 8.8 Tf 0.204 0.255 0.345 rg 1 0 0 1 94 599.2 Tm (Pumunta sa folder na may pubspec.yaml.) Tj ET
+q
+0.090 0.125 0.200 rg
+94 566 443 25 re f
+Q
+BT /F1 9 Tf 0.945 0.961 0.984 rg 1 0 0 1 103 575 Tm (cd "C:\\BMC firebase\\myapp") Tj ET
+q
+1.000 1.000 1.000 rg
+0.863 0.898 0.945 RG 0.8 w
+44 467 507 80 re B
+Q
+q
+0.157 0.392 0.690 rg
+57 508 25 25 re f
+Q
+BT /F2 12 Tf 1.000 1.000 1.000 rg 1 0 0 1 66 517 Tm (2) Tj ET
+BT /F2 10.5 Tf 0.090 0.125 0.200 rg 1 0 0 1 94 525.5 Tm (Mag-login sa Firebase CLI kung kailangan) Tj ET
+BT /F1 8.8 Tf 0.204 0.255 0.345 rg 1 0 0 1 94 511.2 Tm (Gamitin ang Google account na may access sa Firebase project.) Tj ET
+q
+0.090 0.125 0.200 rg
+94 478 443 25 re f
+Q
+BT /F1 9 Tf 0.945 0.961 0.984 rg 1 0 0 1 103 487 Tm (firebase login) Tj ET
+q
+1.000 1.000 1.000 rg
+0.863 0.898 0.945 RG 0.8 w
+44 379 507 80 re B
+Q
+q
+0.157 0.392 0.690 rg
+57 420 25 25 re f
+Q
+BT /F2 12 Tf 1.000 1.000 1.000 rg 1 0 0 1 66 429 Tm (3) Tj ET
+BT /F2 10.5 Tf 0.090 0.125 0.200 rg 1 0 0 1 94 437.5 Tm (Buuin ang production web app) Tj ET
+BT /F1 8.8 Tf 0.204 0.255 0.345 rg 1 0 0 1 94 423.2 Tm (Lilikha ito ng deploy-ready files sa build\\web.) Tj ET
+q
+0.090 0.125 0.200 rg
+94 390 443 25 re f
+Q
+BT /F1 9 Tf 0.945 0.961 0.984 rg 1 0 0 1 103 399 Tm (flutter build web --release) Tj ET
+q
+1.000 1.000 1.000 rg
+0.863 0.898 0.945 RG 0.8 w
+44 291 507 80 re B
+Q
+q
+0.157 0.392 0.690 rg
+57 332 25 25 re f
+Q
+BT /F2 12 Tf 1.000 1.000 1.000 rg 1 0 0 1 66 341 Tm (4) Tj ET
+BT /F2 10.5 Tf 0.090 0.125 0.200 rg 1 0 0 1 94 349.5 Tm (I-deploy sa Firebase Hosting) Tj ET
+BT /F1 8.8 Tf 0.204 0.255 0.345 rg 1 0 0 1 94 335.2 Tm (Ia-upload ng command ang build sa tamang Firebase project.) Tj ET
+q
+0.090 0.125 0.200 rg
+94 302 443 25 re f
+Q
+BT /F1 7.7 Tf 0.945 0.961 0.984 rg 1 0 0 1 103 312.3 Tm (firebase deploy --only hosting --project valdepena-harvey-jerome-17) Tj ET
+q
+1.000 1.000 1.000 rg
+0.863 0.898 0.945 RG 0.8 w
+44 229 507 54 re B
+Q
+q
+0.157 0.392 0.690 rg
+57 243 25 25 re f
+Q
+BT /F2 12 Tf 1.000 1.000 1.000 rg 1 0 0 1 66 252 Tm (5) Tj ET
+BT /F2 10.5 Tf 0.090 0.125 0.200 rg 1 0 0 1 94 261.5 Tm (Tingnan ang live website) Tj ET
+BT /F1 8.8 Tf 0.204 0.255 0.345 rg 1 0 0 1 94 245.2 Tm (Kapag lumabas ang "Deploy complete!", buksan ang link sa ibaba.) Tj ET
+q
+0.929 0.961 1.000 rg
+44 178 507 38 re f
+Q
+BT /F2 8.5 Tf 0.098 0.231 0.447 rg 1 0 0 1 57 194.5 Tm (LIVE APP) Tj ET
+BT /F2 9 Tf 0.082 0.337 0.627 rg 1 0 0 1 111 195 Tm (https://valdepena-harvey-jerome-17.web.app) Tj ET
+q
+1.000 0.973 0.910 rg
+44 66 507 99 re f
+Q
+q
+0.882 0.651 0.184 rg
+44 66 4 99 re f
+Q
+BT /F2 10 Tf 0.090 0.125 0.200 rg 1 0 0 1 58 145 Tm (Paalaala) Tj ET
+BT /F1 8.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 58 129.5 Tm (Ulitin ang Step 1, 3, at 4 tuwing may bagong pagbabago. Hindi kailangan ang GitHub para sa) Tj ET
+BT /F1 8.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 58 118.5 Tm (manual deployment.) Tj ET
+BT /F1 8.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 58 104.5 Tm (Kung may "command not found" na error, tiyaking naka-install ang Flutter SDK at Firebase) Tj ET
+BT /F1 8.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 58 93.5 Tm (CLI. I-check din na nasa tamang folder ka.) Tj ET
+BT /F1 8.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 58 79.5 Tm (Siguraduhing maayos ang Firebase Authentication at Firestore security rules bago gamitin) Tj ET
+BT /F1 8.5 Tf 0.204 0.255 0.345 rg 1 0 0 1 58 68.5 Tm (ang app sa production.) Tj ET
+q
+0.863 0.898 0.945 RG 0.8 w
+44 49 507 0 re S
+Q
+BT /F1 8 Tf 0.396 0.443 0.529 rg 1 0 0 1 44 33 Tm (Firebase project: valdepena-harvey-jerome-17  |  Hosting setup: firebase.json) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000348 00000 n 
+0000000450 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4993
+%%EOF
